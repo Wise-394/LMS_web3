@@ -1,197 +1,375 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import Header from '../Header.vue';
 import Navbar from '../Navbar.vue';
-import ListItem from '../ListItem.vue';
 
-// Sample progress values
-const progress1 = ref(40); 
-const progress2 = ref(90);
+// Time-based greeting
+const getGreeting = () => {
+  const hour = new Date().getHours();
+  if (hour < 12) return 'Good morning';
+  if (hour < 17) return 'Good afternoon';
+  return 'Good evening';
+};
 
-// Sample announcements arrays
-const teacherAnnouncements = ref([
+// Student data
+const student = ref({
+  name: 'Juan Dela Cruz',
+  course: 'BS Information Technology',
+  year: '2nd Year',
+  section: 'A',
+});
+
+// Quick stats
+const stats = ref({
+  tasks: { count: 5, label: 'Pending Tasks' },
+  attendance: { count: '95%', label: 'Attendance Rate' },
+  grades: { count: '88.5', label: 'Average Grade' },
+  achievements: { count: 3, label: 'Achievements' }
+});
+
+// Upcoming deadlines
+const deadlines = ref([
   {
-    subject: "Filipino",
-    teacher: "G. Santos",
-    message: "📢 Paalala: Ang deadline ng assignment ay sa Biyernes, 5:00 PM. Pakisigurado na ito ay maipasa sa oras."
+    subject: 'Filipino',
+    task: 'Essay Submission',
+    due: '2025-05-20',
+    priority: 'high'
   },
   {
-    subject: "Mathematics",
-    teacher: "Ms. Garcia",
-    message: "Reminder: Mag-prepare para sa quiz sa darating na Lunes. Study the lessons on derivatives and integrals."
+    subject: 'Mathematics',
+    task: 'Problem Set 3',
+    due: '2025-05-22',
+    priority: 'medium'
   },
   {
-    subject: "Science",
-    teacher: "Mr. Reyes",
-    message: "Please check your grades on the recent lab report. If you have any questions, don't hesitate to ask."
+    subject: 'Science',
+    task: 'Lab Report',
+    due: '2025-05-25',
+    priority: 'low'
   }
 ]);
 
-const schoolAnnouncements = ref([
+// Recent activities
+const activities = ref([
   {
-    subject: "General Reminder",
-    teacher: "Admin",
-    message: "School is closed on May 15th in observance of a national holiday. Enjoy the break!"
+    type: 'submission',
+    subject: 'English',
+    description: 'Submitted Book Report',
+    time: '2 hours ago'
   },
   {
-    subject: "Upcoming Event",
-    teacher: "Admin",
-    message: "The annual school sports fest will be held on June 5th. Prepare your team and join the fun!"
+    type: 'quiz',
+    subject: 'Mathematics',
+    description: 'Completed Quiz on Calculus',
+    time: '5 hours ago'
+  },
+  {
+    type: 'attendance',
+    subject: 'Science',
+    description: 'Attended Laboratory Class',
+    time: '1 day ago'
   }
 ]);
+
+// School announcements
+const announcements = ref([
+  {
+    title: 'Midterm Examination Schedule',
+    content: 'Midterm examinations will be held from May 25-29, 2025. Please check your student portal for the detailed schedule.',
+    date: '2025-05-15'
+  },
+  {
+    title: 'System Maintenance Notice',
+    content: 'The LMS will undergo maintenance on May 20, 2025, from 12 AM to 4 AM.',
+    date: '2025-05-14'
+  }
+]);
+
+// Format date
+const formatDate = (dateString) => {
+  return new Date(dateString).toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric'
+  });
+};
+
+// Computed properties
+const sortedDeadlines = computed(() => {
+  return [...deadlines.value].sort((a, b) => new Date(a.due) - new Date(b.due));
+});
 </script>
 
 <template>
   <Header />
   <Navbar :role="'student'" />
-
-  <div class="dashboard-container">
-    <!-- Sidebar Section -->
-    <div class="sidebar">
-      <div class="stats-section">
-        <!-- <ListItem :progress="progress1" label="Assignment Progress" /> -->
-        <ListItem :progress="progress2" label="Attendance" />
+  
+  <div class="dashboard">
+    <!-- Welcome Section -->
+    <section class="welcome-section">
+      <div class="welcome-text">
+        <h1>{{ getGreeting() }}, {{ student.name }}! 👋</h1>
+        <p>{{ student.course }} | {{ student.year }} - Section {{ student.section }}</p>
       </div>
-    </div>
+    </section>
 
-    <!-- Main Content Section -->
-    <div class="main-content">
-      <h2>📊 Student Dashboard</h2>
-
-       <!-- School Announcements Section -->
-      <div class="announcement-section">
-        <h3>🏫 School Announcements</h3>
-        <div v-for="(announcement, index) in schoolAnnouncements" :key="index" class="announcement-card">
-          <div class="announcement-header">
-            <span class="announcement-subject">{{ announcement.subject }}</span> - 
-            <span class="announcement-teacher">by {{ announcement.teacher }}</span>
-          </div>
-          <p class="announcement-text">{{ announcement.message }}</p>
+    <!-- Quick Stats -->
+    <section class="stats-grid">
+      <div v-for="(stat, key) in stats" :key="key" class="stat-card">
+        <div class="stat-content">
+          <h3>{{ stat.count }}</h3>
+          <p>{{ stat.label }}</p>
         </div>
       </div>
+    </section>
 
-      <!-- Teacher's Announcements Section -->
-      <div class="announcement-section">
-        <h3>🗒️ Teacher’s Announcements</h3>
-        <div v-for="(announcement, index) in teacherAnnouncements" :key="index" class="announcement-card">
-          <div class="announcement-header">
-            <span class="announcement-subject">{{ announcement.subject }}</span> - 
-            <span class="announcement-teacher">by {{ announcement.teacher }}</span>
+    <!-- Main Content Grid -->
+    <div class="content-grid">
+      <!-- Left Column -->
+      <div class="left-column">
+        <!-- Upcoming Deadlines -->
+        <section class="deadlines-section">
+          <h2>📅 Upcoming Deadlines</h2>
+          <div class="deadlines-list">
+            <div v-for="deadline in sortedDeadlines" :key="deadline.due" 
+                 class="deadline-card" :class="deadline.priority">
+              <div class="deadline-info">
+                <h4>{{ deadline.subject }}</h4>
+                <p>{{ deadline.task }}</p>
+                <span class="due-date">Due: {{ formatDate(deadline.due) }}</span>
+              </div>
+            </div>
           </div>
-          <p class="announcement-text">{{ announcement.message }}</p>
-        </div>
+        </section>
+
+        <!-- Recent Activities -->
+        <section class="activities-section">
+          <h2>🔔 Recent Activities</h2>
+          <div class="activity-timeline">
+            <div v-for="(activity, index) in activities" :key="index" class="activity-item">
+              <div class="activity-content">
+                <h4>{{ activity.subject }}</h4>
+                <p>{{ activity.description }}</p>
+                <span class="activity-time">{{ activity.time }}</span>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Right Column -->
+      <div class="right-column">
+        <!-- Announcements -->
+        <section class="announcements-section">
+          <h2>📢 Announcements</h2>
+          <div class="announcements-list">
+            <div v-for="(announcement, index) in announcements" :key="index" class="announcement-card">
+              <h4>{{ announcement.title }}</h4>
+              <p>{{ announcement.content }}</p>
+              <span class="announcement-date">Posted: {{ formatDate(announcement.date) }}</span>
+            </div>
+          </div>
+        </section>
       </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-body {
-  margin: 0;
-  padding: 0;
+.dashboard {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
   font-family: 'Segoe UI', sans-serif;
 }
 
-.dashboard-container {
-  display: flex;
-  padding: 20px;
-  min-height: 100vh;
-  box-sizing: border-box;
+/* Welcome Section */
+.welcome-section {
+  background: linear-gradient(135deg, #5498FF, #3a7bd5);
+  border-radius: 20px;
+  padding: 2rem;
+  color: white;
+  margin-bottom: 2rem;
+  box-shadow: 0 8px 20px rgba(84, 152, 255, 0.2);
 }
 
-.sidebar {
-  width: 220px; 
-  background-color: #ffffff;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  margin-right: 20px; /* Reduced margin */
+.welcome-text h1 {
+  font-size: 2rem;
+  margin: 0;
+  font-weight: 600;
 }
 
-.stats-section {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+.welcome-text p {
+  margin-top: 0.5rem;
+  opacity: 0.9;
+  font-size: 1.1rem;
 }
 
-.main-content {
-  flex-grow: 1;
-  background-color: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  max-width: 900px;
+/* Stats Grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background: white;
+  border-radius: 15px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+}
+
+.stat-content h3 {
+  font-size: 1.8rem;
+  color: #5498FF;
+  margin: 0;
+}
+
+.stat-content p {
+  margin: 0.5rem 0 0;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+/* Content Grid */
+.content-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 2rem;
+}
+
+/* Common Section Styles */
+section {
+  background: white;
+  border-radius: 15px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  margin-bottom: 1.5rem;
 }
 
 h2 {
-  text-align: center;
-  font-size: 28px;
-  margin-bottom: 30px;
+  font-size: 1.3rem;
+  color: #333;
+  margin: 0 0 1.5rem;
+}
+
+/* Deadlines Section */
+.deadline-card {
+  padding: 1rem;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+  border-left: 4px solid;
+  background: #f8fafc;
+}
+
+.deadline-card.high { border-left-color: #ef4444; }
+.deadline-card.medium { border-left-color: #f59e0b; }
+.deadline-card.low { border-left-color: #10b981; }
+
+.deadline-info h4 {
+  margin: 0;
   color: #333;
 }
 
-.announcement-section {
-  background-color: #ffffff;
-  border-radius: 12px;
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-  align-items: center; /* Centering the announcements */
-  justify-content: center; /* Centering content vertically */
-}
-
-.announcement-section h3 {
-  font-size: 22px;
-  color: #5498FF;
-  margin-bottom: 20px;
-  text-align: center;
-}
-
-.announcement-card {
-  background-color: #f9f9f9;
-  padding: 20px;
-  border-radius: 8px;
-  margin-bottom: 24px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 600px; /* Added max-width to prevent cards from stretching too wide */
-}
-
-.announcement-header {
-  font-size: 16px;
+.deadline-info p {
+  margin: 0.3rem 0;
   color: #666;
-  margin-bottom: 10px;
-  text-transform: uppercase;
 }
 
-.announcement-subject {
-  font-weight: bold;
-  color: #333;
-}
-
-.announcement-teacher {
-  font-style: italic;
+.due-date {
+  font-size: 0.85rem;
   color: #888;
 }
 
-.announcement-text {
-  font-size: 16px;
-  color: #444;
-  line-height: 1.6;
+/* Activities Section */
+.activity-item {
+  padding: 1rem;
+  border-bottom: 1px solid #eee;
 }
 
+.activity-item:last-child {
+  border-bottom: none;
+}
+
+.activity-content h4 {
+  margin: 0;
+  color: #333;
+}
+
+.activity-content p {
+  margin: 0.3rem 0;
+  color: #666;
+}
+
+.activity-time {
+  font-size: 0.85rem;
+  color: #888;
+}
+
+/* Announcements Section */
+.announcement-card {
+  padding: 1rem;
+  border-bottom: 1px solid #eee;
+}
+
+.announcement-card:last-child {
+  border-bottom: none;
+}
+
+.announcement-card h4 {
+  margin: 0;
+  color: #333;
+}
+
+.announcement-card p {
+  margin: 0.5rem 0;
+  color: #666;
+  font-size: 0.95rem;
+}
+
+.announcement-date {
+  font-size: 0.85rem;
+  color: #888;
+}
+
+/* Responsive Design */
 @media (max-width: 1024px) {
-  .dashboard-container {
-    flex-direction: column;
-    padding: 20px;
+  .content-grid {
+    grid-template-columns: 1fr;
   }
-
-  .sidebar {
-    width: 100%;
-    margin-bottom: 30px;
+  
+  .dashboard {
+    padding: 1rem;
   }
+}
 
-  .main-content {
-    width: 100%;
+@media (max-width: 768px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .welcome-text h1 {
+    font-size: 1.5rem;
+  }
+  
+  section {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .stat-card {
+    padding: 1rem;
   }
 }
 </style>

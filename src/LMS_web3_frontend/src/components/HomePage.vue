@@ -7,12 +7,8 @@
       </p>
 
       <div class="button-container">
-        <button @click="goToPage('student')" class="role-button student" aria-label="Student Role">
-          Student
-          <span class="btn-bg"></span>
-        </button>
-        <button @click="goToPage('teacher')" class="role-button teacher" aria-label="Teacher Role">
-          Teacher
+        <button @click="goToLogin" class="login-button" aria-label="Login">
+          Login
           <span class="btn-bg"></span>
         </button>
       </div>
@@ -20,296 +16,202 @@
       <p class="tagline">Start your journey in the future of education today.</p>
     </div>
 
-    <!-- Floating shapes for extra vibe -->
+    <!-- Floating shapes for background effect -->
     <div class="floating-shapes">
-      <div class="shape circle"></div>
-      <div class="shape square"></div>
-      <div class="shape triangle"></div>
+      <div class="shape shape-1"></div>
+      <div class="shape shape-2"></div>
+      <div class="shape shape-3"></div>
+      <div class="shape shape-4"></div>
     </div>
 
     <footer>
-      &copy; 2025 Web3 LMS. All rights reserved.
+      &copy; {{ currentYear }} Web3 LMS. All rights reserved.
     </footer>
   </div>
 </template>
 
-<script>
-export default {
-  name: "HomePage",
-  methods: {
-    goToPage(role) {
-      if (role === "student") {
-        this.$router.push({ name: "student" });
-      } else if (role === "teacher") {
-        this.$router.push({ name: "teacher" });
-      }
-    },
-  },
+<script setup>
+import { computed } from 'vue';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+const currentYear = computed(() => new Date().getFullYear());
+
+const goToLogin = () => {
+  router.push('/login');
 };
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap');
-
 .home-page {
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  font-family: 'Poppins', sans-serif;
-  background: linear-gradient(135deg, #f0f4f8, #d9e3f0);
-  color: #333;
+  font-family: 'Inter', system-ui, sans-serif;
+  background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+  color: #0f172a;
   overflow: hidden;
-  padding: 40px 20px 20px;
+  padding: 40px 20px;
   position: relative;
   text-align: center;
 }
 
-/* Animated blurred blobs behind */
-.home-page::before,
-.home-page::after {
-  content: "";
+/* Background shapes */
+.floating-shapes {
   position: absolute;
-  border-radius: 50%;
-  filter: blur(90px);
-  opacity: 0.25;
-  animation: blobMove 20s infinite alternate ease-in-out;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  overflow: hidden;
   z-index: 0;
+  pointer-events: none;
 }
 
-.home-page::before {
+.shape {
+  position: absolute;
+  background: linear-gradient(135deg, #0ea5e9, #2563eb);
+  border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+  filter: blur(40px);
+  opacity: 0.1;
+  animation: floatAnimation 20s infinite alternate ease-in-out;
+}
+
+.shape-1 {
+  width: 300px;
+  height: 300px;
+  top: -150px;
+  left: -150px;
+}
+
+.shape-2 {
   width: 400px;
   height: 400px;
-  background: #5498FF;
-  top: 10%;
-  left: -150px;
-  animation-delay: 0s;
+  top: 40%;
+  right: -200px;
+  animation-delay: 5s;
 }
 
-.home-page::after {
-  width: 350px;
-  height: 350px;
-  background: #3a7bd5;
-  bottom: 15%;
-  right: -130px;
+.shape-3 {
+  width: 200px;
+  height: 200px;
+  bottom: 10%;
+  left: 10%;
   animation-delay: 10s;
 }
 
-@keyframes blobMove {
+.shape-4 {
+  width: 250px;
+  height: 250px;
+  top: 20%;
+  left: 30%;
+  animation-delay: 15s;
+}
+
+@keyframes floatAnimation {
   0% {
-    transform: translate(0, 0) scale(1);
+    transform: translate(0, 0) rotate(0deg) scale(1);
   }
   100% {
-    transform: translate(40px, 30px) scale(1.1);
+    transform: translate(30px, 30px) rotate(60deg) scale(1.1);
   }
 }
 
-/* Content wrapper fade-in */
 .content-wrapper {
   max-width: 650px;
-  margin-top: 50px;
+  margin: auto;
+  position: relative;
   z-index: 1;
   animation: fadeInUp 1.2s ease forwards;
-  opacity: 0;
 }
 
 @keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
   to {
     opacity: 1;
     transform: translateY(0);
   }
-  from {
-    opacity: 0;
-    transform: translateY(25px);
-  }
 }
 
 .title {
-  font-size: 3.5rem;
-  font-weight: 700;
-  margin-bottom: 15px;
-  color: #1a1a1a;
-  text-shadow: 0 2px 6px rgba(84, 152, 255, 0.4);
-}
-
-.highlight {
-  background: linear-gradient(90deg, #5498FF, #3a7bd5);
+  font-size: clamp(2.5rem, 5vw, 3.5rem);
+  font-weight: 800;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+  background: linear-gradient(135deg, #0ea5e9, #2563eb);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  text-shadow: 0 2px 10px rgba(14, 165, 233, 0.2);
 }
 
 .subtitle {
-  font-size: 1.3rem;
-  font-weight: 500;
-  margin-bottom: 50px;
-  color: #4a4a4a;
-  line-height: 1.5;
+  font-size: clamp(1rem, 2.5vw, 1.25rem);
+  font-weight: 400;
+  margin-bottom: 3rem;
+  color: #64748b;
+  line-height: 1.6;
 }
 
-/* Buttons container */
 .button-container {
-  display: flex;
-  flex-direction: row;
-  gap: 40px;
-  flex-wrap: wrap;
-  justify-content: center;
-  margin-bottom: 35px;
+  margin-bottom: 2rem;
 }
 
-.role-button {
+.login-button {
   position: relative;
-  background: transparent;
+  background: linear-gradient(135deg, #0ea5e9, #2563eb);
   border: none;
   color: white;
-  font-size: 1.3rem;
+  font-size: 1.125rem;
   font-weight: 600;
-  padding: 18px 60px;
+  padding: 1rem 3rem;
   border-radius: 50px;
   cursor: pointer;
   overflow: hidden;
-  transition: color 0.4s ease;
-  box-shadow: 0 8px 15px rgba(0,0,0,0.1);
-  user-select: none;
-  letter-spacing: 1.1px;
-  z-index: 1;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(14, 165, 233, 0.3);
 }
 
-.role-button .btn-bg {
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 300%;
-  height: 100%;
-  background: linear-gradient(45deg, #5498FF, #3a7bd5);
-  transition: transform 0.5s ease;
-  z-index: -1;
-  border-radius: 50px;
-  filter: drop-shadow(0 5px 10px rgba(84, 152, 255, 0.5));
+.login-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 25px rgba(14, 165, 233, 0.4);
 }
 
-.role-button.student .btn-bg {
-  background: linear-gradient(45deg, #6aa6ff, #3a7bd5);
-  filter: drop-shadow(0 5px 10px rgba(84, 152, 255, 0.6));
-}
-
-.role-button.teacher .btn-bg {
-  background: linear-gradient(135deg, #3a7bd5, #5498FF);
-  filter: drop-shadow(0 5px 10px rgba(58, 123, 213, 0.6));
-}
-
-.role-button:hover .btn-bg {
-  transform: translateX(33%);
-}
-
-.role-button:hover {
-  color: #fff;
-  box-shadow: 0 12px 25px rgba(58, 123, 213, 0.5);
-  transition: box-shadow 0.3s ease;
-}
-
-.role-button:focus {
-  outline: none;
-  box-shadow: 0 0 10px 4px rgba(84, 152, 255, 0.7);
+.login-button:active {
+  transform: translateY(1px);
 }
 
 .tagline {
-  font-style: italic;
-  color: #666;
-  font-size: 1.15rem;
-  margin-bottom: 60px;
-  user-select: none;
+  font-size: 1.125rem;
+  color: #64748b;
+  margin-bottom: 2rem;
 }
 
-/* Floating shapes */
-.floating-shapes {
-  position: absolute;
-  top: 10%;
-  right: 10%;
-  display: flex;
-  gap: 30px;
-  z-index: 0;
-}
-
-.shape {
-  opacity: 0.12;
-  animation: floatUpDown 6s ease-in-out infinite alternate;
-}
-
-.shape.circle {
-  width: 70px;
-  height: 70px;
-  background: #5498FF;
-  border-radius: 50%;
-  animation-delay: 0s;
-}
-
-.shape.square {
-  width: 60px;
-  height: 60px;
-  background: #3a7bd5;
-  clip-path: polygon(10% 0%, 90% 0%, 100% 40%, 100% 90%, 90% 100%, 10% 100%, 0% 60%, 0% 10%);
-  animation-delay: 2s;
-}
-
-.shape.triangle {
-  width: 50px;
-  height: 50px;
-  background: #5498FF;
-  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-  animation-delay: 4s;
-}
-
-@keyframes floatUpDown {
-  0% {
-    transform: translateY(0);
-    opacity: 0.12;
-  }
-  100% {
-    transform: translateY(-15px);
-    opacity: 0.2;
-  }
-}
-
-/* Footer */
 footer {
-  font-size: 0.85rem;
-  color: #999;
-  margin-bottom: 10px;
+  color: #64748b;
+  font-size: 0.875rem;
+  margin-top: auto;
+  padding: 1rem;
   z-index: 1;
 }
 
-/* Responsive */
-@media (max-width: 480px) {
+/* Responsive Design */
+@media (max-width: 768px) {
+  .home-page {
+    padding: 20px;
+  }
+  
   .content-wrapper {
-    margin-top: 30px;
+    padding: 0 1rem;
   }
-
-  .title {
-    font-size: 2.4rem;
-  }
-
-  .subtitle {
-    font-size: 1rem;
-    margin-bottom: 40px;
-  }
-
-  .button-container {
-    gap: 20px;
-  }
-
-  .role-button {
-    padding: 15px 45px;
-    font-size: 1.1rem;
-  }
-
-  .tagline {
-    font-size: 1rem;
-    margin-bottom: 40px;
-  }
-
-  .floating-shapes {
-    display: none;
+  
+  .login-button {
+    width: 100%;
+    max-width: 300px;
   }
 }
 </style>
