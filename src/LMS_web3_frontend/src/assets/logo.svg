@@ -1,0 +1,13 @@
+<svg width="120" height="40" viewBox="0 0 120 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Shapes -->
+  <path d="M20 8L32 16L20 24L8 16L20 8Z" fill="#60A5FA" fill-opacity="0.3"/>
+  <path d="M20 12L28 17.5L20 23L12 17.5L20 12Z" fill="#3B82F6"/>
+  
+  <!-- Text -->
+  <path d="M45 14H48V26H45V14ZM49 14H52L55 22L58 14H61L56 28H54L49 14Z" fill="currentColor"/>
+  <path d="M62 14H73V17H65V19H72V22H65V26H62V14Z" fill="currentColor"/>
+  <path d="M74 14H85V17H77V19H84V22H77V23H85V26H74V14Z" fill="currentColor"/>
+  
+  <!-- Web3 Text -->
+  <text x="90" y="20" font-family="Poppins" font-size="8" fill="#3B82F6" font-weight="600">Web3</text>
+</svg> 
