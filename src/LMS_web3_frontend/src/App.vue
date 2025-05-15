@@ -1,28 +1,14 @@
-<script setup>
-import { ref } from 'vue';
-import { LMS_web3_backend } from 'declarations/LMS_web3_backend/index';
-let greeting = ref('');
-
-async function handleSubmit(e) {
-  e.preventDefault();
-  const target = e.target;
-  const name = target.querySelector('#name').value;
-  await LMS_web3_backend.greet(name).then((response) => {
-    greeting.value = response;
-  });
-}
-</script>
-
+<!-- src/App.vue -->
 <template>
-  <main>
-    <img src="/logo2.svg" alt="DFINITY logo" />
-    <br />
-    <br />
-    <form action="#" @submit="handleSubmit">
-      <label for="name">Enter your name: &nbsp;</label>
-      <input id="name" alt="Name" type="text" />
-      <button type="submit">Click Me!</button>
-    </form>
-    <section id="greeting">{{ greeting }}</section>
-  </main>
+  <router-view />
 </template>
+
+<style>
+/* Remove margin/padding globally */
+html, body, #app {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background-color: #f9fbfe; /* Or match your design */
+}
+</style>

@@ -14,5 +14,10 @@
   "type": "module",
   "workspaces": [
     "src/LMS_web3_frontend"
-  ]
+  ],
+  "dependencies": {
+    "@dfinity/agent": "^2.4.1",
+    "@dfinity/candid": "^2.4.1",
+    "vue-router": "^4.5.1"
+  }
 }
