@@ -11,6 +11,7 @@
           autocomplete="username"
           required
           placeholder="Enter your username"
+          :disabled="isLoading"
           autofocus
         />
       </div>
@@ -24,10 +25,18 @@
           autocomplete="current-password"
           required
           placeholder="Enter your password"
+          :disabled="isLoading"
         />
       </div>
 
-      <button type="submit" class="login-button">Login</button>
+      <button 
+        type="submit" 
+        class="login-button"
+        :disabled="isLoading"
+      >
+        <span v-if="isLoading" class="spinner"></span>
+        <span>{{ isLoading ? 'Logging in...' : 'Login' }}</span>
+      </button>
 
       <p v-if="error" class="error" role="alert">{{ error }}</p>
     </form>
@@ -45,17 +54,51 @@ import { useRouter } from "vue-router";
 const username = ref("");
 const password = ref("");
 const error = ref("");
+const isLoading = ref(false);
 const router = useRouter();
 
-const handleLogin = () => {
-  if (username.value === "student" && password.value === "student") {
+const validateCredentials = (user, pass) => {
+  if (!user.trim() || !pass.trim()) {
+    return { isValid: false, message: "Please enter both username and password." };
+  }
+  
+  // Check for student credentials
+  if (user.toLowerCase() === "student" && pass === "student") {
+    return { isValid: true, role: "student" };
+  }
+  
+  // Check for teacher credentials
+  if (user.toLowerCase() === "teacher" && pass === "teacher") {
+    return { isValid: true, role: "teacher" };
+  }
+  
+  return { isValid: false, message: "Invalid username or password." };
+};
+
+const handleLogin = async () => {
+  try {
     error.value = "";
-    router.push("/student");
-  } else if (username.value === "teacher" && password.value === "teacher") {
-    error.value = "";
-    router.push("/teacher");
-  } else {
-    error.value = "Invalid username or password.";
+    isLoading.value = true;
+
+    // Simulate API call delay
+    await new Promise(resolve => setTimeout(resolve, 800));
+
+    const validation = validateCredentials(username.value, password.value);
+
+    if (!validation.isValid) {
+      error.value = validation.message;
+      return;
+    }
+
+    // Route based on role
+    const route = validation.role === "student" ? "/student" : "/teacher";
+    await router.push(route);
+
+  } catch (err) {
+    error.value = "An error occurred. Please try again.";
+    console.error("Login error:", err);
+  } finally {
+    isLoading.value = false;
   }
 };
 </script>
@@ -171,20 +214,46 @@ input:focus {
   border-radius: 50px;
   cursor: pointer;
   box-shadow: 0 8px 20px rgba(84, 152, 255, 0.4);
-  transition: box-shadow 0.3s ease, transform 0.3s ease;
+  transition: all 0.3s ease;
   position: relative;
   z-index: 1;
   user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
 }
 
-.login-button:hover {
+.login-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.login-button:not(:disabled):hover {
   box-shadow: 0 14px 30px rgba(58, 123, 213, 0.7);
   transform: scale(1.05);
 }
 
-.login-button:focus {
-  outline: none;
-  box-shadow: 0 0 12px 4px rgba(84, 152, 255, 0.7);
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+input:disabled {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
 }
 
 .error {

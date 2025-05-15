@@ -13,9 +13,9 @@ const getGreeting = () => {
 
 // Student data
 const student = ref({
-  name: 'Juan Dela Cruz',
-  course: 'BS Information Technology',
-  year: '2nd Year',
+  name: 'Moe Lester',
+  course: 'TVL',
+  year: 'Grade 11',
   section: 'A',
 });
 

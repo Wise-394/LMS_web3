@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import Header from '../Header.vue'
 import Navbar from '../Navbar.vue'
 
@@ -15,37 +15,136 @@ const timeSlots = ref([
 ])
 
 const weekSchedule = ref([
-  ['Math 101', 'Science 102', 'break', 'History 104', 'PE 105', 'Math 101', 'Science 102', 'Science 102', 'History 104', 'PE 105'],
-  ['Math 101', 'Science 102', 'break', 'History 104', 'PE 105', 'Math 101', 'Science 102', 'Science 102', 'History 104', 'PE 105'],
-  ['Math 101', 'Science 102', 'break', 'History 104', 'PE 105', 'Math 101', 'Science 102', 'Science 102', 'History 104', 'PE 105'],
-  ['Math 101', 'Science 102', 'break', 'History 104', 'PE 105', 'Math 101', 'Science 102', 'Science 102', 'History 104', 'PE 105'],
-  ['Math 101', 'Science 102', 'break', 'History 104', 'PE 105', 'Math 101', 'Science 102', 'Science 102', 'History 104', 'PE 105'],
+  [
+    { subject: 'Filipino', section: '10 - Mabini', room: 'Room 101' },
+    { subject: 'English', section: '10 - Rizal', room: 'Room 102' },
+    { subject: 'Break' },
+    { subject: 'Math', section: '10 - Einstein', room: 'Room 103' },
+    { subject: 'PathFit', section: '10 - Alpha', room: 'Gym' },
+    { subject: 'Filipino', section: '10 - Bonifacio', room: 'Room 101' },
+    { subject: 'English', section: '10 - Del Pilar', room: 'Room 102' },
+    { subject: 'Math', section: '10 - Newton', room: 'Room 103' }
+  ],
+  [
+    { subject: 'Math', section: '10 - Einstein', room: 'Room 103' },
+    { subject: 'Filipino', section: '10 - Mabini', room: 'Room 101' },
+    { subject: 'Break' },
+    { subject: 'English', section: '10 - Rizal', room: 'Room 102' },
+    { subject: 'PathFit', section: '10 - Beta', room: 'Gym' },
+    { subject: 'Math', section: '10 - Newton', room: 'Room 103' },
+    { subject: 'Filipino', section: '10 - Bonifacio', room: 'Room 101' },
+    { subject: 'English', section: '10 - Del Pilar', room: 'Room 102' }
+  ],
+  [
+    { subject: 'English', section: '10 - Del Pilar', room: 'Room 102' },
+    { subject: 'Math', section: '10 - Einstein', room: 'Room 103' },
+    { subject: 'Break' },
+    { subject: 'Filipino', section: '10 - Mabini', room: 'Room 101' },
+    { subject: 'PathFit', section: '10 - Alpha', room: 'Gym' },
+    { subject: 'English', section: '10 - Rizal', room: 'Room 102' },
+    { subject: 'Math', section: '10 - Newton', room: 'Room 103' },
+    { subject: 'Filipino', section: '10 - Bonifacio', room: 'Room 101' }
+  ],
+  [
+    { subject: 'Filipino', section: '10 - Bonifacio', room: 'Room 101' },
+    { subject: 'English', section: '10 - Del Pilar', room: 'Room 102' },
+    { subject: 'Break' },
+    { subject: 'Math', section: '10 - Newton', room: 'Room 103' },
+    { subject: 'PathFit', section: '10 - Beta', room: 'Gym' },
+    { subject: 'Filipino', section: '10 - Mabini', room: 'Room 101' },
+    { subject: 'English', section: '10 - Rizal', room: 'Room 102' },
+    { subject: 'Math', section: '10 - Einstein', room: 'Room 103' }
+  ],
+  [
+    { subject: 'Math', section: '10 - Newton', room: 'Room 103' },
+    { subject: 'Filipino', section: '10 - Bonifacio', room: 'Room 101' },
+    { subject: 'Break' },
+    { subject: 'English', section: '10 - Del Pilar', room: 'Room 102' },
+    { subject: 'PathFit', section: '10 - Alpha', room: 'Gym' },
+    { subject: 'Math', section: '10 - Einstein', room: 'Room 103' },
+    { subject: 'Filipino', section: '10 - Mabini', room: 'Room 101' },
+    { subject: 'English', section: '10 - Rizal', room: 'Room 102' }
+  ]
 ])
+
+const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
+const currentDay = ref(new Date().getDay() - 1) // 0 = Monday, 4 = Friday
+const currentTime = ref(new Date().toLocaleTimeString())
+
+// Update current time every minute
+setInterval(() => {
+  currentTime.value = new Date().toLocaleTimeString()
+}, 60000)
+
+const getCurrentTimeSlot = computed(() => {
+  const now = new Date()
+  const hours = now.getHours()
+  const minutes = now.getMinutes()
+  const time = hours * 60 + minutes
+
+  const timeSlotRanges = [
+    { start: 7 * 60 + 30, end: 8 * 60 + 30 }, // 7:30-8:30
+    { start: 8 * 60 + 30, end: 9 * 60 + 30 }, // 8:30-9:30
+    { start: 9 * 60 + 30, end: 10 * 60 }, // 9:30-10:00
+    { start: 10 * 60, end: 11 * 60 }, // 10:00-11:00
+    { start: 11 * 60, end: 12 * 60 }, // 11:00-12:00
+    { start: 13 * 60, end: 14 * 60 }, // 1:00-2:00
+    { start: 14 * 60, end: 15 * 60 }, // 2:00-3:00
+    { start: 15 * 60, end: 16 * 60 }, // 3:00-4:00
+  ]
+
+  return timeSlotRanges.findIndex(slot => time >= slot.start && time < slot.end)
+})
+
+const isCurrentTimeSlot = (dayIndex, timeSlotIndex) => {
+  return dayIndex === currentDay.value && timeSlotIndex === getCurrentTimeSlot.value
+}
 </script>
 
 <template>
   <Header />
   <Navbar :role="'teacher'" />
   <div class="schedule-container">
-    <h1 class="schedule-header">📚 Teacher Weekly Schedule</h1>
+    <div class="schedule-header">
+      <h1>📅 Weekly Schedule</h1>
+      <div class="current-time">
+        <span class="time">{{ currentTime }}</span>
+        <span class="day">{{ days[currentDay] }}</span>
+      </div>
+    </div>
+
     <div class="table-wrapper">
       <table class="schedule-table">
         <thead>
           <tr>
-            <th>Time</th>
-            <th>Monday</th>
-            <th>Tuesday</th>
-            <th>Wednesday</th>
-            <th>Thursday</th>
-            <th>Friday</th>
+            <th class="time-header">Time</th>
+            <th 
+              v-for="(day, index) in days" 
+              :key="day"
+              :class="{ 'current-day': index === currentDay }"
+            >
+              {{ day }}
+            </th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(timeSlot, index) in timeSlots" :key="index">
-            <td>{{ timeSlot }}</td>
-            <td v-for="(daySchedule, dayIndex) in weekSchedule" :key="dayIndex">
-              <div v-if="daySchedule[index]">{{ daySchedule[index] }}</div>
-              <div v-else>-</div>
+          <tr v-for="(timeSlot, timeIndex) in timeSlots" :key="timeSlot">
+            <td class="time-slot">{{ timeSlot }}</td>
+            <td 
+              v-for="(daySchedule, dayIndex) in weekSchedule" 
+              :key="dayIndex"
+              :class="{ 'current-slot': isCurrentTimeSlot(dayIndex, timeIndex) }"
+            >
+              <div 
+                v-if="daySchedule[timeIndex]"
+                class="class-block"
+              >
+                <h4>{{ daySchedule[timeIndex].subject }}</h4>
+                <div v-if="daySchedule[timeIndex].subject !== 'Break'" class="class-details">
+                  <span class="section">{{ daySchedule[timeIndex].section }}</span>
+                  <span class="room">{{ daySchedule[timeIndex].room }}</span>
+                </div>
+              </div>
             </td>
           </tr>
         </tbody>
@@ -56,73 +155,191 @@ const weekSchedule = ref([
 
 <style scoped>
 .schedule-container {
-  max-width: 1200px;
-  margin: 20px auto;
-  padding: 20px;
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  font-family: 'Segoe UI', sans-serif;
+  max-width: 1400px;
+  margin: 40px auto;
+  padding: 0 20px;
 }
 
 .schedule-header {
-  text-align: center;
-  font-size: 24px;
-  margin-bottom: 20px;
-  color: #333;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.schedule-header h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.current-time {
+  text-align: right;
+}
+
+.time {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #2563eb;
+  display: block;
+}
+
+.day {
+  font-size: 1rem;
+  color: #64748b;
 }
 
 .table-wrapper {
-  overflow-x: auto; /* enables horizontal scrolling on smaller screens */
-  -webkit-overflow-scrolling: touch; /* smooth scrolling on iOS */
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  overflow: auto;
+  margin-bottom: 24px;
 }
 
 .schedule-table {
   width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
-  min-width: 600px; /* ensures some minimum width for table */
+  border-collapse: separate;
+  border-spacing: 0;
+  min-width: 1000px;
 }
 
-.schedule-table thead th {
-  position: sticky;
-  top: 0;
-  background-color: #f4f4f4;
-  z-index: 5;
-  border: 1px solid #ddd;
+.schedule-table th {
+  background: #f8fafc;
+  padding: 16px;
+  font-weight: 600;
+  text-align: center;
+  border-bottom: 1px solid #e2e8f0;
+  color: #1a1a1a;
+}
+
+.time-header {
+  width: 150px;
+}
+
+.current-day {
+  background: #dbeafe !important;
+  color: #1d4ed8;
+}
+
+.schedule-table td {
   padding: 12px;
-  font-weight: bold;
+  border-bottom: 1px solid #e2e8f0;
+  vertical-align: top;
+  color: #334155;
+}
+
+.time-slot {
+  font-size: 0.9rem;
+  color: #64748b;
+  font-weight: 500;
   text-align: center;
 }
 
-.schedule-table th,
-.schedule-table td {
+.current-slot {
+  background: #f0f9ff;
+}
+
+.class-block {
+  background: white;
+  border-radius: 8px;
   padding: 12px;
-  text-align: center;
-  border: 1px solid #ddd;
+  height: 100%;
+  transition: all 0.2s ease;
+  border: 1px solid #e2e8f0;
+  color: #1a1a1a;
 }
 
-.schedule-table td {
-  background-color: #fafafa;
+.class-block h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 8px;
+  color: #1a1a1a;
 }
 
-.schedule-table td div {
-  padding: 6px;
-  background-color: #e9f7ef;
-  border-radius: 4px;
-  font-size: 14px;
+.class-details {
+  font-size: 0.85rem;
+  color: #64748b;
 }
 
-/* Responsive tweaks */
+.section {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.room {
+  display: block;
+  font-weight: 500;
+}
+
+/* Responsive Enhancements */
+@media (max-width: 1024px) {
+  .schedule-table {
+    min-width: 800px;
+  }
+
+  .schedule-header h1 {
+    font-size: 1.75rem;
+  }
+
+  .time {
+    font-size: 1.25rem;
+  }
+
+  .day {
+    font-size: 0.95rem;
+  }
+}
+
 @media (max-width: 768px) {
-  .schedule-table th,
-  .schedule-table td {
-    padding: 8px 6px;
-    font-size: 12px;
+  .schedule-container {
+    margin: 20px auto;
+    padding: 0 16px;
   }
 
   .schedule-header {
-    font-size: 20px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .current-time {
+    text-align: left;
+  }
+
+  .schedule-table {
+    min-width: 600px;
+  }
+
+  .schedule-header h1 {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .schedule-table {
+    min-width: 100%;
+  }
+
+  .schedule-header h1 {
+    font-size: 1.25rem;
+  }
+
+  .time {
+    font-size: 1.1rem;
+  }
+
+  .day {
+    font-size: 0.9rem;
+  }
+
+  .class-block h4 {
+    font-size: 0.95rem;
+  }
+
+  .class-details {
+    font-size: 0.8rem;
   }
 }
 </style>
+
