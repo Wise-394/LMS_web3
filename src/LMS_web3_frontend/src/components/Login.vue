@@ -50,6 +50,7 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import loginActor from '../agent';
 
 const username = ref("");
 const password = ref("");
@@ -57,41 +58,37 @@ const error = ref("");
 const isLoading = ref(false);
 const router = useRouter();
 
-const validateCredentials = (user, pass) => {
-  if (!user.trim() || !pass.trim()) {
-    return { isValid: false, message: "Please enter both username and password." };
-  }
-  
-  // Check for student credentials
-  if (user.toLowerCase() === "student" && pass === "student") {
-    return { isValid: true, role: "student" };
-  }
-  
-  // Check for teacher credentials
-  if (user.toLowerCase() === "teacher" && pass === "teacher") {
-    return { isValid: true, role: "teacher" };
-  }
-  
-  return { isValid: false, message: "Invalid username or password." };
-};
-
 const handleLogin = async () => {
   try {
     error.value = "";
     isLoading.value = true;
 
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 800));
-
-    const validation = validateCredentials(username.value, password.value);
-
-    if (!validation.isValid) {
-      error.value = validation.message;
+    // Call Motoko backend login function
+    const result = await loginActor.login(username.value, password.value);
+    
+    if ('err' in result) {
+      error.value = result.err;
       return;
     }
 
+    // Get session token from successful login
+    const token = result.ok;
+    
+    // Get user role
+    const roleResult = await loginActor.getUserRole(token);
+    
+    if ('err' in roleResult) {
+      error.value = roleResult.err;
+      return;
+    }
+
+    // Store session token and role in localStorage
+    localStorage.setItem('sessionToken', token);
+    const role = Object.keys(roleResult.ok)[0]; // Get the variant name (student/teacher)
+    localStorage.setItem('userRole', role);
+
     // Route based on role
-    const route = validation.role === "student" ? "/student" : "/teacher";
+    const route = role === "student" ? "/student" : "/teacher";
     await router.push(route);
 
   } catch (err) {

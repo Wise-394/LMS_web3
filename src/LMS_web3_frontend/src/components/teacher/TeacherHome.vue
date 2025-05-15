@@ -139,6 +139,7 @@ const subjects = ref([
         >
           <header class="announcement-header">
             <span class="announcement-subject">{{ announcement.subject }}</span>
+            <span class="announcement-teacher">by {{ announcement.teacher }}</span>
           </header>
           <p class="announcement-text">{{ announcement.message }}</p>
         </div>
@@ -232,6 +233,7 @@ h3 {
   color: #555;
   font-style: italic;
   font-size: 14px;
+  margin-left: 8px;
 }
 
 .announcement-text {

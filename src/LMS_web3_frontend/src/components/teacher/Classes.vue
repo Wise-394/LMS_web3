@@ -11,7 +11,6 @@ const subjects = ref([
     code: 'FIL101',
     name: 'Filipino',
     icon: '📚',
-    sections: ['10 - Mabini', '10 - Bonifacio'],
     students: 62,
     nextClass: '10:00 AM Today',
     progress: 85
@@ -20,7 +19,6 @@ const subjects = ref([
     code: 'MATH101',
     name: 'Mathematics',
     icon: '🔢',
-    sections: ['10 - Einstein', '10 - Newton'],
     students: 55,
     nextClass: '8:30 AM Tomorrow',
     progress: 90
@@ -29,7 +27,6 @@ const subjects = ref([
     code: 'PF101',
     name: 'PathFit',
     icon: '⚽',
-    sections: ['10 - Alpha', '10 - Beta'],
     students: 60,
     nextClass: '3:00 PM Tomorrow',
     progress: 70
@@ -122,10 +119,6 @@ const navigateToSubject = (subject) => {
           </div>
 
           <div class="subject-stats">
-            <div class="stat">
-              <span class="stat-label">Sections</span>
-              <span class="stat-value">{{ subject.sections.length }}</span>
-            </div>
             <div class="stat">
               <span class="stat-label">Students</span>
               <span class="stat-value">{{ subject.students }}</span>

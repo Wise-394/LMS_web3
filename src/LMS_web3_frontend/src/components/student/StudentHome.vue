@@ -13,9 +13,9 @@ const getGreeting = () => {
 
 // Student data
 const student = ref({
-  name: 'Moe Lester',
+  name: 'Juan Dela Cruz',
   course: 'TVL',
-  year: 'Grade 11',
+  year: 'Grade 12',
   section: 'A',
 });
 
@@ -24,7 +24,6 @@ const stats = ref({
   tasks: { count: 5, label: 'Pending Tasks' },
   attendance: { count: '95%', label: 'Attendance Rate' },
   grades: { count: '88.5', label: 'Average Grade' },
-  achievements: { count: 3, label: 'Achievements' }
 });
 
 // Upcoming deadlines
@@ -76,12 +75,14 @@ const announcements = ref([
   {
     title: 'Midterm Examination Schedule',
     content: 'Midterm examinations will be held from May 25-29, 2025. Please check your student portal for the detailed schedule.',
-    date: '2025-05-15'
+    date: '2025-05-15',
+    teacher: 'Ms. Rodriguez'
   },
   {
     title: 'System Maintenance Notice',
     content: 'The LMS will undergo maintenance on May 20, 2025, from 12 AM to 4 AM.',
-    date: '2025-05-14'
+    date: '2025-05-14',
+    teacher: 'System Admin'
   }
 ]);
 
@@ -166,7 +167,10 @@ const sortedDeadlines = computed(() => {
             <div v-for="(announcement, index) in announcements" :key="index" class="announcement-card">
               <h4>{{ announcement.title }}</h4>
               <p>{{ announcement.content }}</p>
-              <span class="announcement-date">Posted: {{ formatDate(announcement.date) }}</span>
+              <div class="announcement-meta">
+                <span class="announcement-date">Posted: {{ formatDate(announcement.date) }}</span>
+                <span class="announcement-teacher">by {{ announcement.teacher }}</span>
+              </div>
             </div>
           </div>
         </section>
@@ -333,9 +337,23 @@ h2 {
   font-size: 0.95rem;
 }
 
+.announcement-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  color: #888;
+}
+
 .announcement-date {
   font-size: 0.85rem;
   color: #888;
+}
+
+.announcement-teacher {
+  color: #555;
+  font-style: italic;
 }
 
 /* Responsive Design */
