@@ -1,0 +1,26 @@
+{
+  "canisters": {
+    "LMS_web3_backend": {
+      "main": "src/LMS_web3_backend/main.mo",
+      "type": "motoko"
+    },
+    "LMS_web3_frontend": {
+      "dependencies": [
+        "LMS_web3_backend"
+      ],
+      "source": [
+        "src/LMS_web3_frontend/dist"
+      ],
+      "type": "assets",
+      "workspace": "LMS_web3_frontend"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "output_env_file": ".env",
+  "version": 1
+}
